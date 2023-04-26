@@ -2,8 +2,9 @@
 const userURL = "http://localhost:1337/api/auth/local/";
 const studentsURL = "http://localhost:1337/api/students";
 
-//Skapa Eventlistener till SendData button
+//Skapa Eventlistener
 document.getElementById("btnSendData").addEventListener("click", sendData);
+document.getElementById("btnFetchData").addEventListener("click", fetchData);
 
 //Funktion för att skicka data
 async function sendData() {
@@ -60,6 +61,30 @@ async function sendData() {
 
     //Få bekräftelse tillbaka
     alert(`${studentResponse.data.attributes.firstName} har lagts till!`);
+}
+
+//Funktion för att hämta alla datat från students
+async function fetchData() {
+    let studentResponse = await sendHTTPRequest(studentsURL);
+
+    console.log(studentResponse);
+
+    let output = "";
+    let forbiddenAttributes = ["createdAt", "updatedAt", "publishedAt"];
+    //Skapa en ForEach loop, går igenom alla poster i tabellen
+    studentResponse.data.forEach(element => {
+        //Går igenom alla attribut i objektet attributes
+
+        for (x in element.attributes) {
+            if (forbiddenAttributes.includes(x)) continue;
+            //Går igenom alla attribut i attributes
+
+            output += `<div>${x}: ${element.attributes[x]}</div>`;
+        }
+    });
+
+    //Skriva ut output till Div-tag
+    document.getElementById("studentsOutput").innerHTML = output;
 }
 
 //Metod som tar in en HTTP request. Returnerar en Respons.
